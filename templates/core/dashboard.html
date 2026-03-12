@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-slate-900">Salom, {{ user.username|default:"foydalanuvchi" }}!</h1>
+            <p class="text-slate-600 mt-1">Bugungi aktivligingiz va bajarilgan ishlar</p>
+        </div>
+
+        {% if user.is_staff %}
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-4">
+                <h2 class="text-xl font-semibold text-slate-900">HR hodimlarni tasdiqlash</h2>
+                {% if pending_hrs %}
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">{{ pending_hrs|length }} ta kutilmoqda</span>
+                {% else %}
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">Barcha tasdiqlangan</span>
+                {% endif %}
+            </div>
+            {% if pending_hrs %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for hr in pending_hrs %}
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="min-w-0">
+                            <h3 class="font-semibold text-slate-900 truncate">{{ hr.full_name }}</h3>
+                            <p class="text-sm text-slate-600 mt-0.5">{{ hr.company.name }}</p>
+                            <p class="text-xs text-slate-500 mt-1">{{ hr.company.industry|default:"—" }}</p>
+                        </div>
+                        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Tasdiqlanmagan</span>
+                    </div>
+                    <div class="space-y-1.5 text-sm text-slate-600 mb-4">
+                        <p>📞 {{ hr.phone }}</p>
+                        <p>✉️ {{ hr.user.email|default:"—" }}</p>
+                        <p class="text-xs text-slate-400">{{ hr.created_at|date:"d.m.Y H:i" }} da roʻyxatdan oʻtgan</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <form method="post" action="{% url 'hr_approve' hr.pk %}" class="flex-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors text-sm">
+                                ✓ Tasdiqlash
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'hr_approve' hr.pk %}" class="flex-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors text-sm">
+                                Rad etish
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center text-slate-500">
+                <p>Hozircha tasdiqlanmagan HR lar yoʻq</p>
+                <a href="/admin/projectapp/hrprofile/" class="inline-block mt-3 text-primary-500 font-medium hover:underline">Admin panelda koʻrish →</a>
+            </div>
+            {% endif %}
+            <p class="text-sm text-slate-500 mt-3">Tasdiqlangan HR hodimlar ish eʼlonlarini joylashi mumkin.</p>
+        </div>
+        {% endif %}
+
+<!--        <div class="grid md:grid-cols-3 gap-6 mb-10">-->
+<!--            <a href="{% url 'jobs_list' %}" class="block bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow card-hover">-->
+<!--                <p class="text-slate-500 text-sm font-medium mb-1">Qabul qilingan</p>-->
+<!--                <p class="text-3xl font-bold text-primary-500">{{ accepted_count|default:0 }}</p>-->
+<!--                <p class="text-slate-600 text-sm mt-1">Qabul qilingan arizalar</p>-->
+<!--            </a>-->
+<!--            <a href="{% url 'jobs_list' %}" class="block bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow card-hover">-->
+<!--                <p class="text-slate-500 text-sm font-medium mb-1">Jarayonda</p>-->
+<!--                <p class="text-3xl font-bold text-slate-700">{{ in_progress_count|default:0 }}</p>-->
+<!--                <p class="text-slate-600 text-sm mt-1">Yuborilgan, tekshirilmoqda</p>-->
+<!--            </a>-->
+<!--            <a href="{% url 'jobs_list' %}" class="block bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow card-hover">-->
+<!--                <p class="text-slate-500 text-sm font-medium mb-1">Reyting</p>-->
+<!--                <p class="text-3xl font-bold text-slate-700">{% if avg_rating %}{{ avg_rating }}{% else %}—{% endif %}</p>-->
+<!--                <p class="text-slate-600 text-sm mt-1">HR baholashi</p>-->
+<!--            </a>-->
+<!--        </div>-->
+
+        <div class="mb-10">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <h2 class="text-xl font-semibold text-slate-900">Ish eʼlonlari</h2>
+                <a href="{% url 'jobs_list' %}" class="text-primary-500 font-medium hover:underline">Barcha eʼlonlar →</a>
+            </div>
+            <a href="{% url 'jobs_list' %}" class="block bg-white rounded-2xl p-8 border border-slate-100 text-center text-slate-500 hover:border-primary-200 hover:shadow-md transition-all">
+                <p class="mb-4">Kompaniyalardan real vakansiyalar — ariza topshiring</p>
+                <span class="inline-flex px-6 py-3 bg-primary-500 text-white rounded-xl font-semibold hover:bg-primary-600 transition-colors">Ish eʼlonlarini koʻrish</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

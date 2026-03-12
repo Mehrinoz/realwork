@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+        <a href="{% url 'jobs_list' %}" class="text-primary-500 hover:underline text-sm mb-6 inline-block">← Ish eʼlonlari</a>
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h1 class="text-2xl font-bold text-slate-900 mb-2">{{ job.title }}</h1>
+                <p class="text-slate-500 mb-6">{{ job.company.name }}{% if job.category %} • {{ job.get_category_display }}{% endif %}{% if job.company.industry %} • {{ job.company.industry }}{% endif %} • {{ job.created_at|date:"d.m.Y" }}</p>
+                {% if job.description %}
+                <div class="prose prose-slate mb-6">
+                    <h3 class="text-slate-900 font-semibold mb-2">Batafsil</h3>
+                    <p class="text-slate-600 whitespace-pre-wrap">{{ job.description }}</p>
+                </div>
+                {% endif %}
+                <div>
+                    <h3 class="text-slate-900 font-semibold mb-2">Shartlar</h3>
+                    <p class="text-slate-600 whitespace-pre-wrap">{{ job.requirements }}</p>
+                </div>
+                {% if job.attachment %}
+                <p class="mt-4"><a href="{{ job.attachment.url }}" target="_blank" rel="noopener" class="text-primary-500 hover:underline">📎 Faylni yuklab olish</a></p>
+                {% endif %}
+                {% if job.link %}
+                <p class="mt-2"><a href="{{ job.link }}" target="_blank" rel="noopener" class="text-primary-500 hover:underline">🔗 Havola</a></p>
+                {% endif %}
+                {% if can_apply %}
+                    <div class="mt-8 pt-6 border-t border-slate-200">
+                        {% if has_applied %}
+                            <p class="text-green-600 font-medium">Siz bu eʼlonga ariza yuborgansiz.</p>
+                        {% else %}
+                            <a href="{% url 'job_apply' job.pk %}" class="inline-flex px-6 py-3 bg-primary-500 text-white rounded-xl font-semibold hover:bg-primary-600 transition-colors">Ariza yuborish</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

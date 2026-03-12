@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Roʻyxatdan oʻtish{% endblock %}
+
+{% block content %}
+<section class="min-h-[80vh] flex items-center justify-center py-16 px-4">
+    <div class="w-full max-w-2xl animate-slide-up">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-slate-900">Roʻyxatdan oʻtish</h1>
+            <p class="text-slate-600 mt-2">Kim sifatida roʻyxatdan oʻtmoqchisiz?</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <a href="{% url 'register_student' %}" class="block p-8 bg-white rounded-2xl border-2 border-slate-200 hover:border-primary-400 hover:shadow-lg transition-all text-center card-hover">
+                <span class="text-4xl mb-4 block">🎓</span>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Talaba</h2>
+                <p class="text-slate-600 text-sm">OTM, yoʻnalish, koʻnikmalar kiritib, ish eʼlonlariga ariza topshiraman</p>
+            </a>
+            <a href="{% url 'register_hr' %}" class="block p-8 bg-white rounded-2xl border-2 border-slate-200 hover:border-primary-400 hover:shadow-lg transition-all text-center card-hover">
+                <span class="text-4xl mb-4 block">🏢</span>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Kompaniya hodimi (HR)</h2>
+                <p class="text-slate-600 text-sm">Kompaniya maʼlumotlari va HR profil orqali eʼlon joylayman</p>
+            </a>
+        </div>
+        <p class="text-center text-slate-600 mt-8">
+            Hisobingiz bormi? <a href="{% url 'login' %}" class="text-primary-500 font-medium hover:underline">Kirish</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

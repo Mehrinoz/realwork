@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Profilni tahrirlash{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16 px-4">
+    <div class="max-w-2xl mx-auto">
+        <div class="mb-8">
+            <a href="{% url 'profile' %}" class="text-primary-500 hover:underline text-sm">← Profilga qaytish</a>
+            <h1 class="text-2xl font-bold text-slate-900 mt-2">Profilni tahrirlash</h1>
+            <p class="text-slate-600">Talaba maʼlumotlarini yangilang</p>
+        </div>
+        {% if messages %}
+            <div class="mb-4 p-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm">{% for m in messages %}{{ m }}{% endfor %}</div>
+        {% endif %}
+        <form method="post" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 space-y-5">
+            {% csrf_token %}
+            <h3 class="font-semibold text-slate-900">Shaxs maʼlumotlari</h3>
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="md:col-span-2">
+                    <label for="full_name" class="block text-sm font-medium text-slate-700 mb-1">Ism familiya *</label>
+                    <input type="text" id="full_name" name="full_name" required value="{{ profile.full_name }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Ism Familiya">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email *</label>
+                    <input type="email" id="email" name="email" required value="{{ profile.user.email }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="siz@email.com">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-slate-700 mb-1">Telefon raqami *</label>
+                    <input type="text" id="phone" name="phone" required value="{{ profile.phone }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="+998901234567">
+                </div>
+                <div>
+                    <label for="age" class="block text-sm font-medium text-slate-700 mb-1">Yoshi</label>
+                    <input type="number" id="age" name="age" min="16" max="99" value="{{ profile.age|default:'' }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="21">
+                </div>
+                <div>
+                    <label for="gender" class="block text-sm font-medium text-slate-700 mb-1">Jinsi</label>
+                    <select id="gender" name="gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none">
+                        <option value="">Tanlang</option>
+                        <option value="M" {% if profile.gender == 'M' %}selected{% endif %}>Erkak</option>
+                        <option value="F" {% if profile.gender == 'F' %}selected{% endif %}>Ayol</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label for="address" class="block text-sm font-medium text-slate-700 mb-1">Manzil</label>
+                    <input type="text" id="address" name="address" value="{{ profile.address }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Toshkent">
+                </div>
+            </div>
+            <hr class="border-slate-200">
+            <h3 class="font-semibold text-slate-900">OTM maʼlumotlari</h3>
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="md:col-span-2">
+                    <label for="university_name" class="block text-sm font-medium text-slate-700 mb-1">OTM nomi *</label>
+                    <input type="text" id="university_name" name="university_name" required value="{{ profile.university_name }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="masalan: TDIU">
+                </div>
+                <div>
+                    <label for="faculty" class="block text-sm font-medium text-slate-700 mb-1">Fakultet</label>
+                    <input type="text" id="faculty" name="faculty" value="{{ profile.faculty }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Dasturiy injiniring">
+                </div>
+                <div>
+                    <label for="major" class="block text-sm font-medium text-slate-700 mb-1">Yoʻnalish</label>
+                    <input type="text" id="major" name="major" value="{{ profile.major }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Backend">
+                </div>
+                <div>
+                    <label for="enrollment_year" class="block text-sm font-medium text-slate-700 mb-1">Oʻqishga kirgan yili</label>
+                    <input type="number" id="enrollment_year" name="enrollment_year" min="2015" max="2030" value="{{ profile.enrollment_year|default:'' }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="2022">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="skills" class="block text-sm font-medium text-slate-700 mb-1">Koʻnikmalar</label>
+                    <textarea id="skills" name="skills" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Python, Django, React (vergul bilan ajratib)">{{ profile.skills }}</textarea>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3.5 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors">Saqlash</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

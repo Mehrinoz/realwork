@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if form_type == 'edit' %}Tahrirlash{% else %}Yangi eʼlon{% endif %}{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16 px-4">
+    <div class="max-w-2xl mx-auto">
+        <a href="{% url 'dashboard' %}" class="text-primary-500 hover:underline text-sm mb-6 inline-block">← Dashboard</a>
+        <h1 class="text-2xl font-bold text-slate-900 mb-8">{% if form_type == 'edit' %}Eʼlonni tahrirlash{% else %}Yangi eʼlon joylash{% endif %}</h1>
+        {% if messages %}
+            <div class="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm">{% for m in messages %}{{ m }}{% endfor %}</div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-5">
+            {% csrf_token %}
+            <div>
+                <label for="title" class="block text-sm font-medium text-slate-700 mb-1">Elon nomi *</label>
+                <input type="text" id="title" name="title" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="masalan: Matematika oʻqituvchisi kerak yoki Dasturlash boʻyicha mutaxassis" value="{% if job %}{{ job.title }}{% endif %}">
+            </div>
+            <div>
+                <label for="category" class="block text-sm font-medium text-slate-700 mb-1">Yoʻnalish (ixtiyoriy)</label>
+                <select id="category" name="category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none">
+                    <option value="">Tanlang</option>
+                    <option value="it" {% if job and job.category == 'it' %}selected{% endif %}>IT / Dasturlash</option>
+                    <option value="education" {% if job and job.category == 'education' %}selected{% endif %}>Taʼlim / Oʻqituvchi</option>
+                    <option value="design" {% if job and job.category == 'design' %}selected{% endif %}>Dizayn</option>
+                    <option value="marketing" {% if job and job.category == 'marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="finance" {% if job and job.category == 'finance' %}selected{% endif %}>Moliya / Buxgalteriya</option>
+                    <option value="sales" {% if job and job.category == 'sales' %}selected{% endif %}>Savdo</option>
+                    <option value="other" {% if job and job.category == 'other' %}selected{% endif %}>Boshqa</option>
+                </select>
+            </div>
+            <div>
+                <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Batafsil (ixtiyoriy)</label>
+                <textarea id="description" name="description" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Vazifa va kompaniya haqida...">{% if job %}{{ job.description }}{% endif %}</textarea>
+            </div>
+            <div>
+                <label for="requirements" class="block text-sm font-medium text-slate-700 mb-1">Shartlar *</label>
+                <textarea id="requirements" name="requirements" required rows="5" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="Tajriba, yosh, texnologiyalar va boshqa shartlar (har qanday yoʻnalish uchun)">{% if job %}{{ job.requirements }}{% endif %}</textarea>
+            </div>
+            <div>
+                <label for="attachment" class="block text-sm font-medium text-slate-700 mb-1">Fayl (ixtiyoriy)</label>
+                <input type="file" id="attachment" name="attachment" class="w-full px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm file:mr-4 file:py-2 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-600">
+                {% if job and job.attachment %}<p class="text-slate-500 text-xs mt-1">Hozirgi: <a href="{{ job.attachment.url }}" class="text-primary-500">{{ job.attachment.name }}</a></p>{% endif %}
+            </div>
+            <div>
+                <label for="link" class="block text-sm font-medium text-slate-700 mb-1">Havola (ixtiyoriy)</label>
+                <input type="url" id="link" name="link" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none" placeholder="https://..." value="{% if job %}{{ job.link }}{% endif %}">
+            </div>
+            {% if form_type == 'edit' and job %}
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="is_active" name="is_active" {% if job.is_active %}checked{% endif %} class="rounded border-slate-300 text-primary-500 focus:ring-primary-500">
+                <label for="is_active" class="text-slate-700">Eʼlon aktiv (talabalar koʻradi)</label>
+            </div>
+            {% endif %}
+            <button type="submit" class="w-full py-3.5 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors">{% if form_type == 'edit' %}Saqlash{% else %}Eʼlon qoʻyish{% endif %}</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

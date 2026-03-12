@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}HR Dashboard{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        {% if user.is_staff %}
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-4">
+                <h2 class="text-xl font-semibold text-slate-900">HR hodimlarni tasdiqlash</h2>
+                {% if pending_hrs %}
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">{{ pending_hrs|length }} ta kutilmoqda</span>
+                {% else %}
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">Barcha tasdiqlangan</span>
+                {% endif %}
+            </div>
+            {% if pending_hrs %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for hr in pending_hrs %}
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="min-w-0">
+                            <h3 class="font-semibold text-slate-900 truncate">{{ hr.full_name }}</h3>
+                            <p class="text-sm text-slate-600 mt-0.5">{{ hr.company.name }}</p>
+                            <p class="text-xs text-slate-500 mt-1">{{ hr.company.industry|default:"—" }}</p>
+                        </div>
+                        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Tasdiqlanmagan</span>
+                    </div>
+                    <div class="space-y-1.5 text-sm text-slate-600 mb-4">
+                        <p>📞 {{ hr.phone }}</p>
+                        <p>✉️ {{ hr.user.email|default:"—" }}</p>
+                        <p class="text-xs text-slate-400">{{ hr.created_at|date:"d.m.Y H:i" }} da roʻyxatdan oʻtgan</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <form method="post" action="{% url 'hr_approve' hr.pk %}" class="flex-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-colors text-sm">✓ Tasdiqlash</button>
+                        </form>
+                        <form method="post" action="{% url 'hr_approve' hr.pk %}" class="flex-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors text-sm">Rad etish</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center text-slate-500">
+                <p>Hozircha tasdiqlanmagan HR lar yoʻq</p>
+                <a href="/admin/projectapp/hrprofile/" class="inline-block mt-3 text-primary-500 font-medium hover:underline">Admin panelda koʻrish →</a>
+            </div>
+            {% endif %}
+            <p class="text-sm text-slate-500 mt-3">Tasdiqlangan HR hodimlar ish eʼlonlarini joylashi mumkin.</p>
+        </div>
+        {% endif %}
+        {% if not user.hr_profile.is_approved %}
+        <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
+            <p class="font-medium">Hisobingiz hali admin tomonidan tasdiqlanmagan.</p>
+            <p class="text-sm mt-1">Ish eʼlonlarini joylash uchun admin sizning HR hisobingizni tasdiqlashi kerak. Tasdiqlanganidan keyin eʼlon joylashingiz mumkin boʻladi.</p>
+        </div>
+        {% endif %}
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Eʼlonlar boshqaruvi</h1>
+                <p class="text-slate-600 mt-1">{{ user.hr_profile.company.name }}</p>
+            </div>
+            {% if user.hr_profile.is_approved %}
+            <a href="{% url 'job_create' %}" class="px-6 py-3 bg-primary-500 text-white rounded-xl font-semibold hover:bg-primary-600 transition-colors">+ Yangi eʼlon</a>
+            {% else %}
+            <span class="px-6 py-3 bg-slate-200 text-slate-500 rounded-xl font-semibold cursor-not-allowed">+ Yangi eʼlon (tasdiqlanishi kerak)</span>
+            {% endif %}
+        </div>
+
+        {% if jobs %}
+            <div class="space-y-4">
+                {% for job in jobs %}
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900">{{ job.title }}</h2>
+                        <p class="text-slate-500 text-sm mt-1">
+                            {{ job.created_at|date:"d.m.Y" }} • {{ job.applications.count }} ariza
+                            {% if not job.is_approved %}
+                                <span class="ml-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Tasdiqlanmagan</span>
+                            {% else %}
+                                <span class="ml-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Tasdiqlangan</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'job_applications' job.pk %}" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-colors">Arizalar</a>
+                        <a href="{% url 'job_edit' job.pk %}" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-primary-300 hover:text-primary-600 transition-colors">Tahrirlash</a>
+                        <form method="post" action="{% url 'job_delete' job.pk %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="px-4 py-2 rounded-lg bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors"
+                                    onclick="return confirm('Eʼlon o‘chirilsinmi? Arizalar ham o‘chib ketadi.')">
+                                O‘chirish
+                            </button>
+                        </form>
+                        {% if not job.is_active %}<span class="text-amber-600 text-sm">Yopilgan</span>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-2xl p-12 border border-slate-100 text-center">
+                <p class="text-slate-500 mb-4">Hali eʼlon yoʻq</p>
+                {% if user.hr_profile.is_approved %}
+                <a href="{% url 'job_create' %}" class="inline-flex px-6 py-3 bg-primary-500 text-white rounded-xl font-semibold hover:bg-primary-600 transition-colors">Birinchi eʼlonni joylash</a>
+                {% else %}
+                <p class="text-sm text-amber-600">Eʼlon joylash uchun admin hisobingizni tasdiqlashi kerak.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

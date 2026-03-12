@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="h-32 bg-gradient-to-br from-primary-400 to-primary-600"></div>
+            <div class="px-6 pb-8 -mt-16 relative">
+                <div class="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center text-3xl font-bold text-primary-500">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div class="flex flex-wrap items-start justify-between gap-4 mt-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">
+                            {% if user_role == 'student' and user.student_profile %}
+                                {{ user.student_profile.full_name }}
+                            {% elif user_role == 'hr' and user.hr_profile %}
+                                {{ user.hr_profile.full_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </h1>
+                        <p class="text-slate-600">{{ user.email|default:"Email qoʻshilmagan" }}</p>
+                    </div>
+                    {% if user_role == 'student' or user_role == 'hr' %}
+                    <a href="{% url 'profile_edit' %}" class="px-4 py-2 rounded-xl border border-primary-300 text-primary-600 font-medium hover:bg-primary-50 transition-colors">Tahrirlash</a>
+                    {% endif %}
+                </div>
+
+                {% if user_role == 'student' and user.student_profile %}
+                <div class="mt-8 p-6 bg-slate-50 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between gap-4 mb-2">
+                        <h3 class="font-semibold text-slate-900">Talaba maʼlumotlari</h3>
+                        <a href="{% url 'profile_edit' %}" class="text-sm text-primary-500 font-medium hover:underline">Tahrirlash</a>
+                    </div>
+                    <p class="text-slate-700"><span class="text-slate-500">OTM:</span> {{ user.student_profile.university_name }}{% if user.student_profile.faculty %} • {{ user.student_profile.faculty }}{% endif %}</p>
+                    {% if user.student_profile.major %}<p class="text-slate-700"><span class="text-slate-500">Yoʻnalish:</span> {{ user.student_profile.major }}</p>{% endif %}
+                    {% if user.student_profile.enrollment_year %}<p class="text-slate-700"><span class="text-slate-500">Kirish yili:</span> {{ user.student_profile.enrollment_year }}</p>{% endif %}
+                    <p class="text-slate-700"><span class="text-slate-500">Telefon:</span> {{ user.student_profile.phone }}</p>
+                    {% if user.student_profile.address %}<p class="text-slate-700"><span class="text-slate-500">Manzil:</span> {{ user.student_profile.address }}</p>{% endif %}
+                    {% if user.student_profile.skills %}<p class="text-slate-700"><span class="text-slate-500">Koʻnikmalar:</span> {{ user.student_profile.skills }}</p>{% endif %}
+                </div>
+                <div class="mt-6 p-6 bg-slate-50 rounded-xl">
+                    <h3 class="font-semibold text-slate-900 mb-2">Ish arizalari</h3>
+                    <a href="{% url 'dashboard' %}" class="text-primary-500 font-medium hover:underline">Dashboardda koʻrish →</a>
+                    <a href="{% url 'portfolio_page' %}" class="block mt-2 text-primary-500 font-medium hover:underline">Portfolio →</a>
+                </div>
+                {% elif user_role == 'hr' and user.hr_profile %}
+                <div class="mt-8 p-6 bg-slate-50 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between gap-4 mb-2">
+                        <h3 class="font-semibold text-slate-900">Kompaniya</h3>
+                        <a href="{% url 'profile_edit' %}" class="text-sm text-primary-500 font-medium hover:underline">Tahrirlash</a>
+                    </div>
+                    <p class="text-slate-700"><span class="text-slate-500">Nomi:</span> {{ user.hr_profile.company.name }}</p>
+                    <p class="text-slate-700"><span class="text-slate-500">Email:</span> {{ user.hr_profile.company.email }}</p>
+                    {% if user.hr_profile.company.industry %}<p class="text-slate-700"><span class="text-slate-500">Soha:</span> {{ user.hr_profile.company.industry }}</p>{% endif %}
+                    <p class="text-slate-700"><span class="text-slate-500">HR telefon:</span> {{ user.hr_profile.phone }}</p>
+                </div>
+                <div class="mt-6 p-6 bg-slate-50 rounded-xl">
+                    <h3 class="font-semibold text-slate-900 mb-2">Eʼlonlar</h3>
+                    <a href="{% url 'dashboard' %}" class="text-primary-500 font-medium hover:underline">Dashboardda boshqarish →</a>
+                </div>
+                {% else %}
+                <div class="mt-8 p-6 bg-slate-50 rounded-xl">
+                    <h3 class="font-semibold text-slate-900 mb-4">Profil</h3>
+                    <p class="text-slate-600">Umumiy foydalanuvchi</p>
+                    {% if user.is_staff %}<p class="text-primary-600 font-medium mt-2"><a href="/admin/">Admin panel →</a></p>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

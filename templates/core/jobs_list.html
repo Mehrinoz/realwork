@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Yangi eʼlonlar{% endblock %}
+
+{% block content %}
+<section class="py-12 md:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Yangi eʼlonlar</h1>
+            <p class="text-slate-600">HR hodimlar joylagan real vakansiyalar — ariza topshiring</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mb-8">
+            <a href="{% url 'jobs_list' %}" class="px-4 py-2 rounded-lg font-medium transition-colors {% if not selected_category %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Barchasi</a>
+            <a href="{% url 'jobs_list' %}?category=it" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'it' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">IT / Dasturlash</a>
+            <a href="{% url 'jobs_list' %}?category=education" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'education' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Taʼlim / Oʻqituvchi</a>
+            <a href="{% url 'jobs_list' %}?category=design" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'design' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Dizayn</a>
+            <a href="{% url 'jobs_list' %}?category=marketing" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'marketing' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Marketing</a>
+            <a href="{% url 'jobs_list' %}?category=finance" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'finance' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Moliya / Buxgalteriya</a>
+            <a href="{% url 'jobs_list' %}?category=sales" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'sales' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Savdo</a>
+            <a href="{% url 'jobs_list' %}?category=other" class="px-4 py-2 rounded-lg font-medium transition-colors {% if selected_category == 'other' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">Boshqa</a>
+        </div>
+
+        {% if jobs %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for job in jobs %}
+            <a href="{% url 'job_detail' job.pk %}" class="block bg-white rounded-2xl p-6 border border-slate-100 card-hover shadow-sm">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
+                    {% if job.category == 'it' %}bg-primary-100 text-primary-600
+                    {% elif job.category == 'education' %}bg-blue-100 text-blue-600
+                    {% elif job.category == 'design' %}bg-emerald-100 text-emerald-600
+                    {% elif job.category == 'marketing' %}bg-amber-100 text-amber-600
+                    {% elif job.category == 'finance' %}bg-slate-100 text-slate-600
+                    {% elif job.category == 'sales' %}bg-purple-100 text-purple-600
+                    {% else %}bg-slate-100 text-slate-600{% endif %} mb-4">
+                    {% if job.category %}{{ job.get_category_display }}{% else %}Boshqa{% endif %}
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ job.title }}</h3>
+                <p class="text-slate-600 text-sm mb-4 line-clamp-2">{{ job.requirements }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-500">{{ job.company.name }}{% if job.company.industry %} • {{ job.company.industry }}{% endif %}</span>
+                    <span class="text-sm font-medium text-primary-500">Verified ✓</span>
+                </div>
+                <p class="text-slate-400 text-xs mt-2">{{ job.created_at|date:"d.m.Y" }}</p>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-2xl p-12 border border-slate-100 text-center text-slate-500">
+            <p>Hozircha eʼlonlar yoʻq</p>
+            <p class="text-sm mt-2">HR hodimlar yangi vakansiya joylaganda shu yerda koʻrinadi</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
